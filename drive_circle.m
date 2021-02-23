@@ -2,8 +2,6 @@
 
 clear all
 
-pkg load control
-
 ## reference speeds (forwards and yaw)
 REF_Vx		= 100/3.6;		# 100 km/hr
 REF_Vpsi	= 5*pi/180;		# 5 deg/s
@@ -36,13 +34,13 @@ for i = 1:length(TIME)
   DELTA		= OctCar_get_wheel_steering_angles()(1);
   Fx		= OctCar_get_wheel_longitudinal_forces();
 
-  ## proportional control of forward speed using rear wheel forces
+  ## control of forward speed using rear wheel forces
   ERR_Vx	= REF_Vx - VEL(1);
   dFx		= 0.1*ERR_Vx;
   Fx		+= [0;0;dFx;dFx];
   OctCar_set_wheel_longitudinal_forces(Fx);
 
-  ## proportional control of yaw rate using front wheel steering angle
+  ## control of yaw rate using front wheel steering angle
   ERR_Vpsi 	= REF_Vpsi-VEL(3);
   dDELTA 	= 1e-2*ERR_Vpsi;
   DELTA 	+= dDELTA;
