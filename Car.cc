@@ -5,7 +5,7 @@
  *
  * Geraint Paul Bevan <g.bevan@mech.gla.ac.uk>
  * Initial Revision : <2005-06-21>
- * Latest Time-stamp: <2007-08-05 21:20:10 geraint>
+ * Latest Time-stamp: <2021/02/24 00:05:03 geraint>
  *
  * $Id: Car.cc,v 1.1 2008-01-09 14:21:13 gbevan Exp $
  *
@@ -46,7 +46,10 @@ Car::Car(void) {
   g = 9.81;
   
   // friction coefficient
-  mu = 1.0;
+  mu[FL] = 1.0;
+  mu[FR] = 1.0;
+  mu[RL] = 1.0;
+  mu[RR] = 1.0;
 
   // moment arms to wheels
   X[FL] = 1.67;
@@ -125,8 +128,8 @@ Car::get_acceleration(void) const {
  * reasonable for wet roads; for ice it may be 0.05.
  */
 double
-Car::get_friction_coefficient(void) const {
-  return mu;
+Car::get_wheel_friction_coefficient(const wheel i) const {
+  return mu[i];
 }
 
 /// returns the position of the Car's centre of gravity.
@@ -252,7 +255,10 @@ Car::set_acceleration(const axis &accel) {
  */
 void
 Car::set_friction_coefficient(const double friction_coefft) {
-  mu = friction_coefft;
+  mu[FL] = friction_coefft;
+  mu[FR] = friction_coefft;
+  mu[RL] = friction_coefft;
+  mu[RR] = friction_coefft;
 }
 
 /// sets the velocity of the Car's centre of gravity.
@@ -268,6 +274,17 @@ Car::set_velocity(const axis &vel) {
   velocity = vel;
   update_wheel_speeds();
 }
+
+/// sets the friction coefficient between a wheel and the road
+/**
+ * A coefficient of 1.0 corresponds to dry asphalt; 0.6 is
+ * reasonable for wet roads; for ice it may be as 0.05.
+ */
+void
+Car::set_wheel_friction_coefficient(const wheel i, const double friction_coefft) {
+  mu[i] = friction_coefft;
+}
+
 
 /// sets the lateral force between a wheel and the road.
 /**
@@ -357,7 +374,7 @@ Car::update_acceleration(void) {
 
     // traction saturation
     double ft = sqrt(fx[i]*fx[i] + fy[i]*fy[i]);
-    double fmax = mu * fz[i];
+    double fmax = mu[i] * fz[i];
     if (ft > fmax) {
       std::clog << "Traction saturation" << std::endl;
       fx[i] *= fmax/ft;
@@ -404,7 +421,7 @@ Car::update_tyre_forces(void) {
     phi = By * alpha[i];
     fy[i] = - Dy * sin(Cy * atan(phi - Ey * (phi - atan(phi))));
 
-    fy[i] *= mu * fz[i];
+    fy[i] *= mu[i] * fz[i];
   }
 };
 
@@ -524,7 +541,10 @@ Car::write_parameters(void) const {
   std::cout << "=== Vehicle parameters ===" << std::endl
 	    << "m\t" << m << std::endl
 	    << "Izz\t" << Izz << std::endl
-	    << "mu\t" << mu << std::endl
+	    << "mu[FL]\t" << mu[FL] << std::endl
+	    << "mu[FR]\t" << mu[FR] << std::endl
+	    << "mu[RL]\t" << mu[RL] << std::endl
+	    << "mu[RR]\t" << mu[RR] << std::endl
 	    << "X[FL]\t" << X[FL] << std::endl
 	    << "X[FR]\t" << X[FR] << std::endl
 	    << "X[RL]\t" << X[RL] << std::endl

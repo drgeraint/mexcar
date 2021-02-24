@@ -4,13 +4,19 @@ clear all
 
 ## reference speeds (forwards and yaw)
 REF_Vx		= 100/3.6;		# 100 km/hr
-REF_Vpsi	= 15*pi/180;		# 15 deg/s
+REF_Vpsi	= 15*pi/180;		# 5 deg/s
 
 if (~ exist('car'))
   OctCar()
 end
-OctCar_set_velocity([REF_Vx,0,0]) 
-OctCar_set_wheel_longitudinal_forces([0,0,0,0])
+
+## icy
+MU_WET = 0.6;
+MU_ICE = 0.01;
+OctCar_set_wheel_friction_coefficients([MU_WET,MU_WET,MU_WET,MU_WET]);
+
+OctCar_set_velocity([REF_Vx,0,0]);
+OctCar_set_wheel_longitudinal_forces([0,0,0,0]);
 
 disp('Initial conditions')
 VEL		= OctCar_get_velocity()
@@ -48,9 +54,23 @@ for i = 1:length(TIME)
 
   data(i,:) = [POS', DELTA(1), sum(Fx), VEL'];
 
+  ## ice
+  X		= POS(1);
+  Y 		= POS(2);
+  PSI		= POS(3);
+  if ((Y>-100)&&(Y<100)&&((PSI>-pi/2)&&(PSI<pi/2)))
+    MU = [MU_WET,MU_ICE,MU_WET,MU_ICE];
+  elseif ((Y>-100)&&(Y<100)&&((PSI<-pi/2)||(PSI>pi/2)))
+    MU = [MU_ICE,MU_WET,MU_ICE,MU_WET];
+  else
+    MU = [MU_WET,MU_WET,MU_WET,MU_WET];
+  end
+  OctCar_set_wheel_friction_coefficients(MU);
 end
 
 # write final state
+OctCar_write_parameters();
+
 VEL		= OctCar_get_velocity()
 DELTA		= OctCar_get_wheel_steering_angles()
 Fx		= OctCar_get_wheel_longitudinal_forces()

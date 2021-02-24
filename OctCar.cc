@@ -5,7 +5,7 @@
  *
  * Geraint Paul Bevan <g.bevan@mech.gla.ac.uk>
  * Initial Revision : <2005-06-24>
- * Latest Time-stamp: <2007-08-05 21:31:17 geraint>
+ * Latest Time-stamp: <2021/02/24 00:15:14 geraint>
  *
  ***********************************************************/
 
@@ -64,7 +64,7 @@ const char *usage_OctCar =
 " OctCar_get_position\n"
 " OctCar_get_velocity\n"
 " OctCar_get_acceleration\n"
-" OctCar_get_friction_coefficient\n"
+" OctCar_get_wheel_friction_coefficients\n"
 " OctCar_get_wheel_lateral_forces\n"
 " OctCar_get_wheel_lateral_speeds\n"
 " OctCar_get_wheel_longitudinal_forces\n"
@@ -75,8 +75,8 @@ const char *usage_OctCar =
 " OctCar_integrate_euler_nonlinear\n"
 " OctCar_integrate_euler_linear\n"
 " OctCar_set_acceleration\n"
-" OctCar_set_friction_coefficient\n"
 " OctCar_set_velocity\n"
+" OctCar_set_wheel_friction_coefficients\n"
 " OctCar_set_wheel_longitudinal_forces\n"
 " OctCar_set_wheel_slip_angles\n"
 " OctCar_set_wheel_speeds\n"
@@ -192,15 +192,18 @@ DEFUN_DLD(OctCar_get_acceleration, args, ,
   return retval;
 }
 
-DEFUN_DLD(OctCar_get_friction_coefficient, args, ,
-	  usage_text("get_friction_coefficient"))
+DEFUN_DLD(OctCar_get_wheel_friction_coefficients, args, ,
+	  usage_text("get_wheel_friction_coefficients"))
 {
   octave_value_list retval;
   if (args.length() != 0) {
-    print_usage(usage_text("get_friction_coefficient"));
+    print_usage(usage_text("get_wheel_friction_coefficient"));
   }
-  double mu;
-  mu = car->get_friction_coefficient();
+  ColumnVector mu(4);
+  mu(0) = car->Car::get_wheel_friction_coefficient(Car::FL);
+  mu(1) = car->Car::get_wheel_friction_coefficient(Car::FR);
+  mu(2) = car->Car::get_wheel_friction_coefficient(Car::RL);
+  mu(3) = car->Car::get_wheel_friction_coefficient(Car::RR);
   retval(0) = mu;
   return retval;
 }
@@ -413,7 +416,26 @@ DEFUN_DLD(OctCar_set_velocity, args, ,
   return retval;
 }
 
-
+DEFUN_DLD(OctCar_set_wheel_friction_coefficients, args, ,
+	  usage_text("set_wheel_friction_coefficients"))
+{
+  octave_value_list retval;
+  if (args.length() != 1) {
+    print_usage(usage_text("set_wheel_friction_coefficients"));
+    error("incorrect number of arguments");
+    retval(0) = false;
+    return retval;
+  }
+  ColumnVector mu(4, 1.0);
+  mu = args(0).column_vector_value();
+  car->Car::set_wheel_friction_coefficient(Car::FL, mu(0));
+  car->Car::set_wheel_friction_coefficient(Car::FR, mu(1));
+  car->Car::set_wheel_friction_coefficient(Car::RL, mu(2));
+  car->Car::set_wheel_friction_coefficient(Car::RR, mu(3));
+  retval(0) = true;
+  return retval;
+}
+  
 DEFUN_DLD(OctCar_set_wheel_lateral_forces, args, ,
 	  usage_text("set_wheel_lateral_forces"))
 {

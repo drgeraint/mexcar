@@ -5,7 +5,7 @@
  *
  * Geraint Paul Bevan <g.bevan@mech.gla.ac.uk>
  * Initial Revision : <2005-06-21>
- * Latest Time-stamp: <2007-08-05 21:18:12 geraint>
+ * Latest Time-stamp: <2021/02/24 00:04:50 geraint>
  *
  * $Id: Car.hh,v 1.1 2008-01-09 14:21:13 gbevan Exp $
  *
@@ -74,7 +74,7 @@ public:
   axis get_velocity(void) const;
   axis get_acceleration(void) const;
   
-  double get_friction_coefficient(void) const;
+  double get_wheel_friction_coefficient(const wheel i) const;
   double get_wheel_lateral_force(const wheel i) const;
   double get_wheel_lateral_speed(const wheel i) const;
   double get_wheel_longitudinal_force(const wheel i) const;
@@ -88,6 +88,7 @@ public:
   void set_acceleration(const axis &accel);
   void set_friction_coefficient(const double friction_coefft);
   void set_velocity(const axis &vel);
+  void set_wheel_friction_coefficient(const wheel i, const double mu);
   void set_wheel_lateral_force(const wheel i, const double force);
   void set_wheel_longitudinal_force(const wheel i, const double force);
   void set_wheel_slip_angle(const wheel i, const double angle);
@@ -150,7 +151,7 @@ protected:
   double g;
 
   /** friction coefficient (-) */
-  double mu;
+  double mu[4];
 
   // inputs
 

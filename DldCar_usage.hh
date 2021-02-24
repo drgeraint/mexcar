@@ -132,6 +132,11 @@ usage_text(std::string function)
       "column vector V [longitudinal; lateral; yaw]\n"
       "(in the body axis system).\n";
 
+    arguments["set_wheel_friction_coefficients"] = "mu";
+    description["set_wheel_friction_coefficients"] =
+      "Set the tyre friction coefficients with the\n"
+      "column vector mu [FL; FR; RL; RR]\n";
+
     arguments["set_wheel_longitudinal_forces"] = "F";
     description["set_wheel_longitudinal_forces"] =
       "Set the longitudinal tyre forces with the\n"
