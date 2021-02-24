@@ -93,9 +93,9 @@ plot(Y,X,'.k',Y(1),X(1),'xr',Y(end),X(end),'or')
 legend({'path','start','end'},'location','southwest')
 xlabel('Lateral position Y [m]')
 ylabel('Longitudinal position X [m]')
-title('Driving in a circle')
+title('Driving in a circle with ice patch')
 axis('square')
-print -dpng 'path.png'
+print -dpng 'path-ice.png'
 
 ## plot speed and control inputs
 figure(2)
@@ -117,4 +117,4 @@ plot(TIME,Vx,[0,TIME(end)],[REF_Vx,REF_Vx],':r')
 ylabel('V_x [m/s]')
 xlabel('Time [s]')
 title('Forward speed')
-print -dpng 'control.png'
+print -dpng 'control-ice.png'
