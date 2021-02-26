@@ -3,11 +3,9 @@
 /************************************************************
  * Car.cc defines Car - a non-linear vehicle model.
  *
- * Geraint Paul Bevan <g.bevan@mech.gla.ac.uk>
+ * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-06-21>
- * Latest Time-stamp: <2021/02/24 00:05:03 geraint>
- *
- * $Id: Car.cc,v 1.1 2008-01-09 14:21:13 gbevan Exp $
+ * Latest Time-stamp: <2021/02/25 22:11:57 geraint>
  *
  ***********************************************************/
 

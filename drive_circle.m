@@ -19,13 +19,14 @@ Fx		= OctCar_get_wheel_longitudinal_forces()
 Fy		= OctCar_get_wheel_lateral_forces()
 A		= OctCar_get_A()
 B		= OctCar_get_B()
+W		= OctCar_get_W()
 
 OctCar_set_wheel_steering_angle(3*pi/180) # 3 degree steering angle
 
 DT 		= 0.2;
 TIME 		= [0:DT:600];
 
-data 		= zeros(length(TIME),8);
+data 		= zeros(length(TIME),11);
 
 for i = 1:length(TIME)
   OctCar_integrate_euler_nonlinear(DT,1);
@@ -46,8 +47,8 @@ for i = 1:length(TIME)
   DELTA 	+= dDELTA;
   OctCar_set_wheel_steering_angle(DELTA);
 
-  data(i,:) = [POS', DELTA(1), sum(Fx), VEL'];
-
+  W		= OctCar_get_W();
+  data(i,:) 	= [POS', DELTA(1), sum(Fx), VEL', W'];
 end
 
 # write final state
@@ -57,6 +58,7 @@ Fx		= OctCar_get_wheel_longitudinal_forces()
 FY		= OctCar_get_wheel_lateral_forces()
 A		= OctCar_get_A()
 B		= OctCar_get_B()
+W		= OctCar_get_W()
 
 X		= data(:,1);
 Y		= data(:,2);
@@ -98,3 +100,17 @@ ylabel('V_x [m/s]')
 xlabel('Time [s]')
 title('Forward speed')
 print -dpng 'control.png'
+
+figure(3)
+subplot(311)
+plot(TIME(100:end),data(100:end,9))
+ylabel('dX"/d\mu')
+title('Disturbance matrix W');
+subplot(312)
+plot(TIME(100:end),data(100:end,10))
+ylabel('dY"/d\mu')
+subplot(313)
+plot(TIME(100:end),data(100:end,11))
+ylabel('dPsi"/d\mu')
+xlabel('Time t [s]')
+print -dpng 'W.png'

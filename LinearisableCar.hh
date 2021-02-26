@@ -3,9 +3,9 @@
 /************************************************************
  * LinearisableCar.hh
  *
- * Geraint Paul Bevan <g.bevan@mech.gla.ac.uk>
+ * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-06-22>
- * Latest Time-stamp: <2007-08-05 21:34:46 geraint>
+ * Latest Time-stamp: <2021/02/25 22:16:51 geraint>
  ***********************************************************/
 
 #ifndef _LINEARISABLECAR_H_
@@ -34,24 +34,29 @@ public:
 
   /// number of states and inputs of the linearised model.
   /**
-   * NX is the number of states; NU is the number of inputs.
+   * NX is the number of states; NU is the number of inputs;
+   * NW is the number of disturbances.
    */
-  enum vector_size { NX = 3, NU = 5 };
-  /** size of state and input vectors */
+  enum vector_size { NX = 3, NU = 5, NW = 1 };
+  /** size of state, input and disturbance vectors */
   typedef enum vector_size vector_size;
 
   /** state matrix */
   typedef double A_matrix[NX][NX];
   /** input matrix */
   typedef double B_matrix[NU][NX];
-
+  /** disturbance matrix */
+  typedef double W_matrix[NW][NX];
+  
   void integrate_euler(const double dt);
 
   void get_A(double *A_array);
   void get_B(double *B_array);
+  void get_W(double *NX);
 
   void print_A(void) const;
   void print_B(void) const;
+  void print_W(void) const;
 
 private:
 
@@ -61,9 +66,13 @@ private:
   /** the input matrix of the linearised model */
   B_matrix B;
 
+  /** the disturbance matrix of the linearised model */
+  W_matrix W;
+
   void update_A(void);
   void update_B(void);
-
+  void update_W(void);
+  
   // functions for A matrix
 
   double ddotX_dotX(void) const;
@@ -112,6 +121,9 @@ private:
   double vy_dotPsi(const wheel i) const;
 
   bool warned_linearised_integration;
+
+  // function for W matrix
+  double fy_mu(const wheel i) const;
 };
 
 #endif // _LINEARISABLECAR_H_

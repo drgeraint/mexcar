@@ -3,9 +3,10 @@
 /***********************************************************
  * LinearisableCar.cc
  *
- * Geraint Paul Bevan <g.bevan@mech.gla.ac.uk>
+ * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-06-22>
- * Latest Time-stamp: <2007-08-05 21:39:40 geraint>
+ * Latest Time-stamp: <2021/02/26 00:37:47 geraint>
+ *
  **********************************************************/
 
 #include <cmath>
@@ -21,6 +22,7 @@
 LinearisableCar::LinearisableCar() {
   update_A();
   update_B();
+  update_W();
   warned_linearised_integration = false;
 }
 
@@ -51,6 +53,18 @@ LinearisableCar::get_B(double *B_array) {
   memcpy(B_array,B,sizeof(B));
 }
 
+/// updates and returns the disturbance matrix.
+/**
+ * The disturbance matrix determines the effect of a change
+ * in friction coefficient (mu) on the accelerations of the
+ * vehicle, transmitted via the lateral tyre forces only.
+ */
+void
+LinearisableCar::get_W(double *W_array) {
+  update_W();
+  memcpy(W_array,W,sizeof(W));
+}
+
 /// performs one Euler integration step.
 /**
  * The vehicle acceleration is updated and then integrated
@@ -77,7 +91,8 @@ LinearisableCar::integrate_euler(const double dt) {
   }
   update_A();
   update_B();
-
+  update_W();
+  
   static double old_fx[4];
   static double old_delta[4];
   static bool init = false;
@@ -172,6 +187,17 @@ LinearisableCar::print_B(void) const {
 	    << B[3][2] << tab << B[4][2] << std::endl;
 }
 
+/// prints the system disturbance matrix to standard output */
+void
+LinearisableCar::print_W(void) const {
+  std::cout.setf(std::ios::scientific);
+  std::cout.precision(6);
+  std::cout << std::endl << "W matrix" << std::endl << std::endl
+	    << W[0][0] << std::endl
+	    << W[0][1] << std::endl
+	    << W[0][2] << std::endl;
+}
+  
 /// updates the system state matrix.
 /**
  * Calculates the state ("A") matrix after updating the tyre
@@ -218,6 +244,24 @@ LinearisableCar::update_B(void) {
   B[2][2] = ddotPsi_fx(RL);
   B[3][2] = ddotPsi_fx(RR);
   B[4][2] = ddotPsi_delta();
+}
+
+/// updates the system disturbance matrix.
+/** 
+ * Calculates the disturbance ("W") matrix after updating the tyre
+ * forces.
+ */
+void
+LinearisableCar::update_W(void) {
+  update_tyre_forces();
+  W[0][0] = ddotX_fy(FL)*fy_mu(FL) + ddotX_fy(FR)*fy_mu(FR)
+          + ddotX_fy(RL)*fy_mu(RL) + ddotX_fy(RR)*fy_mu(RR);
+
+  W[0][1] = ddotY_fy(FL)*fy_mu(FL) + ddotY_fy(FR)*fy_mu(FR)
+          + ddotY_fy(RL)*fy_mu(RL) + ddotY_fy(RR)*fy_mu(RR);
+
+  W[0][2] = ddotPsi_fy(FL)*fy_mu(FL) + ddotPsi_fy(FR)*fy_mu(FR)
+          + ddotPsi_fy(RL)*fy_mu(RL) + ddotPsi_fy(RR)*fy_mu(RR);
 }
 
 // functions for A matrix
@@ -601,4 +645,29 @@ LinearisableCar::vx_dotPsi(const wheel i) const {
 double
 LinearisableCar::vy_dotPsi(const wheel i) const {
   return + X[i]*cos(delta[i]) + Y[i]*sin(delta[i]);
+}
+
+// additional functions for W matrix functions
+
+/// partial derivative
+/**
+ * Partial derivative of wheel lateral acceleration with respect
+ * to friction coefficient.
+ */
+double
+LinearisableCar::fy_mu(const wheel i) const {
+  const char tab = '\t';
+  double ans;
+  double tmp = atan(18*alpha[i]);
+  ans = -9*tmp*fz[i] / (10*sqrt(tmp*tmp+1));
+#ifdef DEBUG
+  std::cout.setf(std::ios::scientific);
+  std::cout.precision(6);
+  std::cout << "DEBUG:" << tab
+	    << "fz(" << i << ") = " << fz[i] << tab
+  	    << "alpha(" << i << ") = " << alpha[i] << tab
+  	    << "fy_mu(" << i << ") = " << ans << std::endl;
+  std::cout.flush();
+#endif
+  return ans;
 }

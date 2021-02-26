@@ -3,9 +3,9 @@
 /************************************************************
  * OctCar.cc
  *
- * Geraint Paul Bevan <g.bevan@mech.gla.ac.uk>
+ * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-06-24>
- * Latest Time-stamp: <2021/02/24 00:15:14 geraint>
+ * Latest Time-stamp: <2021/02/25 22:12:36 geraint>
  *
  ***********************************************************/
 
@@ -61,6 +61,7 @@ const char *usage_OctCar =
 "Related functions:\n"
 " OctCar_get_A\n"
 " OctCar_get_B\n"
+" OctCar_get_W\n"
 " OctCar_get_position\n"
 " OctCar_get_velocity\n"
 " OctCar_get_acceleration\n"
@@ -135,6 +136,26 @@ DEFUN_DLD(OctCar_get_B, args, ,
   for (int i = 0; i < LinearisableCar::NU; i++) {
     for (int j = 0; j < LinearisableCar::NX; j++) {
       m(j,i) = B_array[counter++];
+    }
+  }
+  retval(0) = m;
+  return retval;
+}
+
+DEFUN_DLD(OctCar_get_W, args, ,
+	  usage_text("get_W"))
+{
+  octave_value_list retval;
+  if (args.length() != 0) {
+    print_usage(usage_text("get_W"));
+  }
+  double W_array[LinearisableCar::NX*LinearisableCar::NW];
+  car->get_W(W_array);
+  Matrix m(LinearisableCar::NX,LinearisableCar::NW);
+  int counter = 0;
+  for (int i = 0; i < LinearisableCar::NW; i++) {
+    for (int j = 0; j < LinearisableCar::NX; j++) {
+      m(j,i) = W_array[counter++];
     }
   }
   retval(0) = m;
