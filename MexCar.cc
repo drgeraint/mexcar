@@ -3,9 +3,10 @@
 /**********************************************************************
  * MexCar.cc
  *
- * Geraint Paul Bevan <g.bevan@mech.gla.ac.uk>
+ * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-08-10>
- * Latest Time-stamp: <2007-08-06 16:40:53 geraint>
+ * Latest Time-stamp: <2021/02/26 02:33:12 geraint>
+ *
  ***********************************************************************/
 
 /** \file MexCar.cc

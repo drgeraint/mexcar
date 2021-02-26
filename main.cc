@@ -3,9 +3,9 @@
 /**********************************************************************
  * main.cc
  *
- * Geraint Paul Bevan <geraint.bevan@ntlworld.com>
+ * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-06-21>
- * Latest Time-stamp: <2007-08-05 21:13:47 geraint>
+ * Latest Time-stamp: <2021/02/26 02:31:56 geraint>
  ***********************************************************************/
 
 #include <cmath>

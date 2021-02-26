@@ -3,11 +3,9 @@
 /************************************************************
  * Crash.hh
  *
- * Geraint Paul Bevan <g.bevan@mech.gla.ac.uk>
+ * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-06-23>
- * Latest Time-stamp: <2007-08-05 21:59:13 geraint>
- *
- * $Id: Crash.hh,v 1.1 2008-01-09 14:21:13 gbevan Exp $
+ * Latest Time-stamp: <2021/02/26 02:32:42 geraint>
  *
  ***********************************************************/
 
