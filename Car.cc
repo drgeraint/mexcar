@@ -5,7 +5,7 @@
  *
  * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-06-21>
- * Latest Time-stamp: <2021/02/25 22:11:57 geraint>
+ * Latest Time-stamp: <2021/02/27 23:29:56 geraint>
  *
  ***********************************************************/
 
@@ -71,6 +71,15 @@ Car::Car(void) {
   Dy =  0.9;
   Ey = -1.0;
 
+  // aerodynamic drag coefficient
+  Cd = 0.22;
+
+  // frontal area
+  A = 2.5;
+
+  // air density
+  rho = 1.225;
+  
   // wheel initialisation
   for (wheel i = FL; i <= RR; ++i) {
     alpha[i] = 0.0;
@@ -388,6 +397,10 @@ Car::update_acceleration(void) {
     F.Psi += MZ;
   }
 
+  // aerodynamic drag
+  double VV = velocity.X*velocity.X;
+  F.X -= Cd*A*0.5*rho*VV;
+  
   // Newton II
   acceleration.X = F.X / m;
   acceleration.Y = F.Y / m;

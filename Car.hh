@@ -5,7 +5,7 @@
  *
  * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-06-21>
- * Latest Time-stamp: <2021/02/25 22:12:18 geraint>
+ * Latest Time-stamp: <2021/02/27 23:18:07 geraint>
  *
  ************************************************************/
 
@@ -133,6 +133,15 @@ protected:
   /** moment of inertia (kilogrammes metres squared)*/
   double Izz;
 
+  /** drag coefficient */
+  double Cd;
+
+  /** frontal area (metres squared) */
+  double A;
+
+  /** air density (kilogrammes per cubic metre */
+  double rho;
+  
   /** longitudinal moment arm to wheels (metres) */
   double X[4];
 
