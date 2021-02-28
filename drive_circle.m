@@ -10,7 +10,7 @@ if (~ exist('car'))
   OctCar()
 end
 OctCar_set_velocity([REF_Vx,0,0]) 
-OctCar_set_wheel_longitudinal_forces([0,0,0,0])
+OctCar_set_wheel_longitudinal_forces([0,0,130,130])
 
 disp('Initial conditions')
 VEL		= OctCar_get_velocity()
@@ -23,8 +23,8 @@ W		= OctCar_get_W()
 
 OctCar_set_wheel_steering_angle(3*pi/180) # 3 degree steering angle
 
-DT 		= 0.2;
-TIME 		= [0:DT:600];
+DT 		= 0.1;
+TIME 		= [0:DT:300];
 
 data 		= zeros(length(TIME),11);
 
@@ -37,7 +37,7 @@ for i = 1:length(TIME)
 
   ## control of forward speed using rear wheel forces
   ERR_Vx	= REF_Vx - VEL(1);
-  dFx		= 0.1*ERR_Vx;
+  dFx		= 2.0*ERR_Vx;
   Fx		+= [0;0;dFx;dFx];
   OctCar_set_wheel_longitudinal_forces(Fx);
 
@@ -72,7 +72,7 @@ Vpsi		= data(:,8);
 ## plot trajectory
 figure(1)
 plot(Y,X,'.k',Y(1),X(1),'xr',Y(end),X(end),'or')
-legend({'path','start','end'},'location','southwest')
+legend({'path (dry)','start','end'},'location','southwest','orientation','horizontal')
 xlabel('Lateral position Y [m]')
 ylabel('Longitudinal position X [m]')
 title('Driving in a circle')
