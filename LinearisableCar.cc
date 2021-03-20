@@ -5,7 +5,7 @@
  *
  * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-06-22>
- * Latest Time-stamp: <2021/02/26 00:37:47 geraint>
+ * Latest Time-stamp: <2021/03/19 23:13:01 geraint>
  *
  **********************************************************/
 
@@ -22,7 +22,7 @@
 LinearisableCar::LinearisableCar() {
   update_A();
   update_B();
-  update_W();
+  update_Bw();
   warned_linearised_integration = false;
 }
 
@@ -60,9 +60,9 @@ LinearisableCar::get_B(double *B_array) {
  * vehicle, transmitted via the lateral tyre forces only.
  */
 void
-LinearisableCar::get_W(double *W_array) {
-  update_W();
-  memcpy(W_array,W,sizeof(W));
+LinearisableCar::get_Bw(double *Bw_array) {
+  update_Bw();
+  memcpy(Bw_array,Bw,sizeof(Bw));
 }
 
 /// performs one Euler integration step.
@@ -91,7 +91,7 @@ LinearisableCar::integrate_euler(const double dt) {
   }
   update_A();
   update_B();
-  update_W();
+  update_Bw();
   
   static double old_fx[4];
   static double old_delta[4];
@@ -189,13 +189,13 @@ LinearisableCar::print_B(void) const {
 
 /// prints the system disturbance matrix to standard output */
 void
-LinearisableCar::print_W(void) const {
+LinearisableCar::print_Bw(void) const {
   std::cout.setf(std::ios::scientific);
   std::cout.precision(6);
-  std::cout << std::endl << "W matrix" << std::endl << std::endl
-	    << W[0][0] << std::endl
-	    << W[0][1] << std::endl
-	    << W[0][2] << std::endl;
+  std::cout << std::endl << "Bw matrix" << std::endl << std::endl
+	    << Bw[0][0] << std::endl
+	    << Bw[0][1] << std::endl
+	    << Bw[0][2] << std::endl;
 }
   
 /// updates the system state matrix.
@@ -248,20 +248,20 @@ LinearisableCar::update_B(void) {
 
 /// updates the system disturbance matrix.
 /** 
- * Calculates the disturbance ("W") matrix after updating the tyre
+ * Calculates the disturbance ("Bw") matrix after updating the tyre
  * forces.
  */
 void
-LinearisableCar::update_W(void) {
+LinearisableCar::update_Bw(void) {
   update_tyre_forces();
-  W[0][0] = ddotX_fy(FL)*fy_mu(FL) + ddotX_fy(FR)*fy_mu(FR)
-          + ddotX_fy(RL)*fy_mu(RL) + ddotX_fy(RR)*fy_mu(RR);
+  Bw[0][0] = ddotX_fy(FL)*fy_mu(FL) + ddotX_fy(FR)*fy_mu(FR)
+           + ddotX_fy(RL)*fy_mu(RL) + ddotX_fy(RR)*fy_mu(RR);
 
-  W[0][1] = ddotY_fy(FL)*fy_mu(FL) + ddotY_fy(FR)*fy_mu(FR)
-          + ddotY_fy(RL)*fy_mu(RL) + ddotY_fy(RR)*fy_mu(RR);
+  Bw[0][1] = ddotY_fy(FL)*fy_mu(FL) + ddotY_fy(FR)*fy_mu(FR)
+           + ddotY_fy(RL)*fy_mu(RL) + ddotY_fy(RR)*fy_mu(RR);
 
-  W[0][2] = ddotPsi_fy(FL)*fy_mu(FL) + ddotPsi_fy(FR)*fy_mu(FR)
-          + ddotPsi_fy(RL)*fy_mu(RL) + ddotPsi_fy(RR)*fy_mu(RR);
+  Bw[0][2] = ddotPsi_fy(FL)*fy_mu(FL) + ddotPsi_fy(FR)*fy_mu(FR)
+           + ddotPsi_fy(RL)*fy_mu(RL) + ddotPsi_fy(RR)*fy_mu(RR);
 }
 
 // functions for A matrix
@@ -647,7 +647,7 @@ LinearisableCar::vy_dotPsi(const wheel i) const {
   return + X[i]*cos(delta[i]) + Y[i]*sin(delta[i]);
 }
 
-// additional functions for W matrix functions
+// additional functions for Bw matrix functions
 
 /// partial derivative
 /**

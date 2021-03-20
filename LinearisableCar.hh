@@ -5,7 +5,7 @@
  *
  * Geraint Paul Bevan <geraint.bevan@gcu.ac.uk>
  * Initial Revision : <2005-06-22>
- * Latest Time-stamp: <2021/02/25 22:16:51 geraint>
+ * Latest Time-stamp: <2021/03/19 23:10:21 geraint>
  ***********************************************************/
 
 #ifndef _LINEARISABLECAR_H_
@@ -46,17 +46,17 @@ public:
   /** input matrix */
   typedef double B_matrix[NU][NX];
   /** disturbance matrix */
-  typedef double W_matrix[NW][NX];
+  typedef double Bw_matrix[NW][NX];
   
   void integrate_euler(const double dt);
 
   void get_A(double *A_array);
   void get_B(double *B_array);
-  void get_W(double *NX);
+  void get_Bw(double *NX);
 
   void print_A(void) const;
   void print_B(void) const;
-  void print_W(void) const;
+  void print_Bw(void) const;
 
 private:
 
@@ -67,11 +67,11 @@ private:
   B_matrix B;
 
   /** the disturbance matrix of the linearised model */
-  W_matrix W;
+  Bw_matrix Bw;
 
   void update_A(void);
   void update_B(void);
-  void update_W(void);
+  void update_Bw(void);
   
   // functions for A matrix
 
@@ -122,7 +122,7 @@ private:
 
   bool warned_linearised_integration;
 
-  // function for W matrix
+  // function for Bw matrix
   double fy_mu(const wheel i) const;
 };
 
